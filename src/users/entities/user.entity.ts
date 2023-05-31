@@ -1,5 +1,11 @@
 import { Entity, Column, OneToMany } from 'typeorm';
-import { MaxLength, MinLength, IsUrl, IsEmail } from 'class-validator';
+import {
+  MaxLength,
+  MinLength,
+  IsUrl,
+  IsEmail,
+  IsNotEmpty,
+} from 'class-validator';
 import { Wish } from 'src/wishes/entities/wish.entity';
 import { Wishlist } from 'src/wishlists/entities/wishlist.entity';
 import { GeneralEntity } from 'src/general-entity';
@@ -12,6 +18,7 @@ export class User extends GeneralEntity {
   })
   @MinLength(2)
   @MaxLength(30)
+  @IsNotEmpty()
   username: string;
 
   @Column({
