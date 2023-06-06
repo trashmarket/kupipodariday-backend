@@ -48,7 +48,7 @@ export class WishesService {
 
   async update(id: number, updateWishDto: UpdateWishDto, user: User) {
     if (Object.keys(updateWishDto).length === 0) {
-      throw new BadRequestException('Не выбраны параметры ');
+      throw new BadRequestException('Не выбраны параметры! ');
     }
 
     const wish = await this.wishRepository.findOne({
