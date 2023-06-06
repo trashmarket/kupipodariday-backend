@@ -14,6 +14,8 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FindUsersDto } from './dto/find-users.dto';
+import { UserDecorator } from 'src/decorator/user.decorator';
+import { User } from './entities/user.entity';
 
 @UseGuards(JwtGuard)
 @Controller('users')
@@ -35,23 +37,25 @@ export class UsersController {
     return req.user;
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.usersService.findAll();
-  // }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.usersService.findOne(id);
-  // }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  @Get('me/wishes')
+  findMyWishes(@UserDecorator() user: User) {
+    return this.usersService.findWishes(user);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  @Get(':username/wishes')
+  findUserWishes(@Param('username') username: string) {
+    return this.usersService.findUserWishes(username);
+  }
+
+  @Get(':username')
+  findOne(@Param('username') username: string) {
+    return this.usersService.findOne({
+      where: { username },
+    });
+  }
+
+  @Patch('me')
+  update(@Body() updateUserDto: UpdateUserDto, @UserDecorator() user) {
+    return this.usersService.update(updateUserDto, user);
   }
 }

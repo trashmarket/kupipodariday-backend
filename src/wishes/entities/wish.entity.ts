@@ -20,10 +20,10 @@ export class Wish extends GeneralEntity {
   @IsUrl()
   image: string;
 
-  @Column()
+  @Column({ type: 'real' })
   price: number;
 
-  @Column()
+  @Column({ type: 'real', default: 0 })
   raised: number;
 
   @ManyToOne(() => User, (user) => user.wishes)
@@ -34,7 +34,7 @@ export class Wish extends GeneralEntity {
   @MaxLength(1024)
   description: string;
 
-  @Column()
+  @Column({ type: 'int', default: 0 })
   copied: number;
 
   @OneToMany(() => Offer, (offer) => offer.item)
