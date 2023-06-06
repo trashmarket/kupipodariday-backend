@@ -1,4 +1,4 @@
-import { MaxLength, MinLength, IsUrl, Length } from 'class-validator';
+import { MaxLength, MinLength, IsUrl } from 'class-validator';
 
 export class CreateWishDto {
   @MaxLength(250)

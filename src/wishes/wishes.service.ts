@@ -4,16 +4,18 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, FindOneOptions, Like } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
 import { User } from 'src/users/entities/user.entity';
 import { Wish } from './entities/wish.entity';
+import { WishesRestProvider } from './wishes-rest.provider';
 
 @Injectable()
 export class WishesService {
   constructor(
     @InjectRepository(Wish) private wishRepository: Repository<Wish>,
+    private wishesRestProvider: WishesRestProvider,
   ) {}
   create(createWishDto: CreateWishDto, user: User) {
     return this.wishRepository.save({ ...createWishDto, owner: user });
@@ -46,39 +48,11 @@ export class WishesService {
     });
   }
 
-  async update(id: number, updateWishDto: UpdateWishDto, user: User) {
-    if (Object.keys(updateWishDto).length === 0) {
-      throw new BadRequestException('Не выбраны параметры! ');
-    }
-
-    const wish = await this.wishRepository.findOne({
-      where: { id },
-      relations: { owner: true, offers: true },
-    });
-
-    if (wish.owner.id !== user.id) {
-      throw new ForbiddenException('Вы неможет редактировать чужое желание');
-    }
-
-    if (updateWishDto.price && wish.raised) {
-      throw new ForbiddenException(
-        'Вы неможет редактировать цену так как есть желающие скинуться',
-      );
-    }
-
-    return this.wishRepository.save({ ...wish, ...updateWishDto });
+  update(id: number, updateWishDto: UpdateWishDto, user: User) {
+    return this.wishesRestProvider.update(id, updateWishDto, user);
   }
 
-  async remove(id: number, user: User) {
-    const wish = await this.wishRepository.findOne({
-      where: { id },
-      relations: { owner: true, offers: true },
-    });
-
-    if (wish.owner.id !== user.id) {
-      throw new ForbiddenException('Нельзя удалять чужое жедание');
-    }
-
-    return this.wishRepository.remove(wish);
+  remove(id: number, user: User) {
+    return this.wishesRestProvider.remove(id, user);
   }
 }
