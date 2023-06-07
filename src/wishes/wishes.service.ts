@@ -1,10 +1,6 @@
-import {
-  Injectable,
-  BadRequestException,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
 import { User } from 'src/users/entities/user.entity';
@@ -16,6 +12,7 @@ export class WishesService {
   constructor(
     @InjectRepository(Wish) private wishRepository: Repository<Wish>,
     private wishesRestProvider: WishesRestProvider,
+    private dataSource: DataSource,
   ) {}
   create(createWishDto: CreateWishDto, user: User) {
     return this.wishRepository.save({ ...createWishDto, owner: user });
@@ -46,6 +43,10 @@ export class WishesService {
       where: { id: idWish },
       relations: { owner: true, offers: true },
     });
+  }
+
+  copy(id: number, user: User) {
+    return this.wishesRestProvider.copy(id, user);
   }
 
   update(id: number, updateWishDto: UpdateWishDto, user: User) {

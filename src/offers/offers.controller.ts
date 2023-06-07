@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { OffersService } from './offers.service';
 import { CreateOfferDto } from './dto/create-offer.dto';
 import { UpdateOfferDto } from './dto/update-offer.dto';
@@ -9,7 +17,8 @@ export class OffersController {
 
   @Post()
   create(@Body() createOfferDto: CreateOfferDto) {
-    return this.offersService.create(createOfferDto);
+    // return this.offersService.create(createOfferDto);
+    return 'hello';
   }
 
   @Get()

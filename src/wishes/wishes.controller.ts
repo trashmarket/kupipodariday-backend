@@ -24,6 +24,13 @@ export class WishesController {
     return this.wishesService.create(createWishDto, user);
   }
 
+  @UseGuards(JwtGuard)
+  @Post(':id/copy')
+  @UseGuards(JwtGuard)
+  copy(@Param('id') id: number, @UserDecorator() user: User) {
+    return this.wishesService.copy(id, user);
+  }
+
   @Get('top')
   findTop() {
     return this.wishesService.findTop();
