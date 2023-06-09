@@ -1,4 +1,5 @@
 import * as bcrypt from 'bcrypt';
+import { isArray } from 'class-validator';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 const hashingPass = async (dto: CreateUserDto) => {
@@ -17,4 +18,28 @@ const compareHashingPass = async (
 
 const checkFloat = (num: number) => Math.round(num * 100) / 100;
 
-export { checkFloat, hashingPass, compareHashingPass };
+const extractInterceptorCallback = (data: any, property: string | null) => {
+  if (isArray(data)) {
+    return data.map((item) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, ...intercepterdData } = property
+        ? item[property]
+        : item;
+      return property
+        ? { ...item, [property]: intercepterdData }
+        : { ...item, ...intercepterdData };
+    });
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { password, ...intercepterdData } = property ? data[property] : data;
+  return property
+    ? { ...data, [property]: intercepterdData }
+    : { ...intercepterdData };
+};
+
+export {
+  checkFloat,
+  hashingPass,
+  compareHashingPass,
+  extractInterceptorCallback,
+};

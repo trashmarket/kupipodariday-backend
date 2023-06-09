@@ -11,11 +11,6 @@ export class Wishlist extends GeneralEntity {
   @Column()
   name: string;
 
-  @Column({
-    length: 1500,
-  })
-  description: string;
-
   @IsUrl()
   @Column()
   image: string;
@@ -25,5 +20,5 @@ export class Wishlist extends GeneralEntity {
   items: Wish[];
 
   @ManyToOne(() => User, (user) => user.wishlists)
-  user: User;
+  owner: User;
 }

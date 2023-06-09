@@ -46,7 +46,7 @@ export class User extends GeneralEntity {
   @OneToMany(() => Wish, (whish) => whish.owner)
   wishes: Wish[];
 
-  @OneToMany(() => Wishlist, (wishlist) => wishlist.user)
+  @OneToMany(() => Wishlist, (wishlist) => wishlist.owner)
   wishlists: Wishlist[];
 
   @OneToMany(() => Offer, (offer) => offer.user)

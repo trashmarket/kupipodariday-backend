@@ -4,23 +4,14 @@ import {
   ExecutionContext,
   CallHandler,
 } from '@nestjs/common';
-import { isArray } from 'class-validator';
 import { Observable, map } from 'rxjs';
+import { extractInterceptorCallback } from 'src/utils/general-utils';
 
 @Injectable()
 export class ExcludePassUserOfferInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    return next.handle().pipe(
-      map((data) => {
-        if (isArray(data)) {
-          return data.map((offer) => {
-            const { password, ...intercepterdData } = offer.user;
-            return { ...offer, user: intercepterdData };
-          });
-        }
-        const { password, ...intercepterdData } = data.user;
-        return { ...data, user: intercepterdData };
-      }),
-    );
+    return next
+      .handle()
+      .pipe(map((data) => extractInterceptorCallback(data, 'user')));
   }
 }
