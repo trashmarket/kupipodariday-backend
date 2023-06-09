@@ -13,7 +13,7 @@ export class LocalStratage extends PassportStrategy(Strategy) {
     const user = await this.authService.validatePassword(username, password);
 
     if (!user) {
-      throw new UnauthorizedException('Нверно имя пользователя или пароль');
+      throw new UnauthorizedException('Неверное имя пользователя или пароль');
     }
 
     return user;
