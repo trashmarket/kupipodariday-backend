@@ -1,5 +1,5 @@
 import { Entity, Column, ManyToMany, JoinTable, ManyToOne } from 'typeorm';
-import { MaxLength, MinLength } from 'class-validator';
+import { MaxLength, MinLength, IsUrl } from 'class-validator';
 import { Wish } from 'src/wishes/entities/wish.entity';
 import { User } from 'src/users/entities/user.entity';
 import { GeneralEntity } from 'src/general-entity';
@@ -16,6 +16,7 @@ export class Wishlist extends GeneralEntity {
   })
   description: string;
 
+  @IsUrl()
   @Column()
   image: string;
 

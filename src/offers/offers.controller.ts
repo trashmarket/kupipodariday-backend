@@ -3,41 +3,37 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { OffersService } from './offers.service';
 import { CreateOfferDto } from './dto/create-offer.dto';
-import { UpdateOfferDto } from './dto/update-offer.dto';
+import { JwtGuard } from 'src/guards/jwt-guard';
+import { UserDecorator } from 'src/decorator/user.decorator';
+import { User } from 'src/users/entities/user.entity';
+import { ExcludePassUserOfferInterceptor } from 'src/interseptors';
 
 @Controller('offers')
 export class OffersController {
   constructor(private readonly offersService: OffersService) {}
 
+  @UseInterceptors(ExcludePassUserOfferInterceptor)
+  @UseGuards(JwtGuard)
   @Post()
-  create(@Body() createOfferDto: CreateOfferDto) {
-    // return this.offersService.create(createOfferDto);
-    return 'hello';
+  create(@Body() createOfferDto: CreateOfferDto, @UserDecorator() user: User) {
+    return this.offersService.create(createOfferDto, user);
   }
 
+  @UseInterceptors(ExcludePassUserOfferInterceptor)
   @Get()
   findAll() {
     return this.offersService.findAll();
   }
 
+  @UseInterceptors(ExcludePassUserOfferInterceptor)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.offersService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOfferDto: UpdateOfferDto) {
-    return this.offersService.update(+id, updateOfferDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.offersService.remove(+id);
+  findOne(@Param('id') id: number) {
+    return this.offersService.findOne(id);
   }
 }

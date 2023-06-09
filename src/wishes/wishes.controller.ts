@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { WishesService } from './wishes.service';
 import { CreateWishDto } from './dto/create-wish.dto';
@@ -14,6 +15,7 @@ import { UpdateWishDto } from './dto/update-wish.dto';
 import { JwtGuard } from 'src/guards/jwt-guard';
 import { UserDecorator } from 'src/decorator/user.decorator';
 import { User } from 'src/users/entities/user.entity';
+import { ExcludePassOwnerInterceptor } from 'src/interseptors';
 
 @Controller('wishes')
 export class WishesController {
@@ -31,16 +33,19 @@ export class WishesController {
     return this.wishesService.copy(id, user);
   }
 
+  @UseInterceptors(ExcludePassOwnerInterceptor)
   @Get('top')
   findTop() {
     return this.wishesService.findTop();
   }
 
+  @UseInterceptors(ExcludePassOwnerInterceptor)
   @Get('last')
   finLast() {
     return this.wishesService.findlast();
   }
 
+  @UseInterceptors(ExcludePassOwnerInterceptor)
   @Get(':id')
   findOne(@Param('id') id: number) {
     return this.wishesService.findOne(id);

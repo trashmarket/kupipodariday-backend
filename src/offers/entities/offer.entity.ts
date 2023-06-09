@@ -12,11 +12,16 @@ export class Offer extends GeneralEntity {
   @ManyToOne(() => Wish, (wish) => wish.offers)
   item: Wish;
 
-  @Column()
+  @Column({ type: 'real', default: 0 })
   amount: number;
 
   @Column({
     default: false,
   })
   hidden: boolean;
+
+  @BeforeInsert()
+  InsertFloat() {
+    this.amount = checkFloat(this.amount);
+  }
 }
