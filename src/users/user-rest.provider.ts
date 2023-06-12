@@ -1,7 +1,11 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Repository } from 'typeorm';
+import { Repository, Not } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
@@ -11,22 +15,31 @@ export class UserRestProvider {
   ) {}
 
   async checkBeforeUpdate(updateUserDto: UpdateUserDto, user: User) {
-    if (updateUserDto.username && updateUserDto.username !== user.username) {
-      const user = await this.userRepository.findOne({
-        where: { username: updateUserDto.username },
-      });
-      if (user) {
-        throw new ConflictException('Пользователь с таким ником существует');
-      }
+    if (
+      Object.keys(updateUserDto).length <= 2 &&
+      updateUserDto.username &&
+      updateUserDto.username === user.username &&
+      updateUserDto.email === user.email
+    ) {
+      throw new ForbiddenException(
+        'вы передали тоже самое имя и почту без изменений',
+      );
     }
-
-    if (updateUserDto.email && updateUserDto.email !== user.email) {
-      const user = await this.userRepository.findOne({
-        where: { email: updateUserDto.email },
+    if (
+      (updateUserDto.username && updateUserDto.username !== user.username) ||
+      (updateUserDto.email && updateUserDto.email !== user.email)
+    ) {
+      const existingUser = await this.userRepository.findOne({
+        where: [
+          { id: Not(user.id), username: updateUserDto.username },
+          { id: Not(user.id), email: updateUserDto.email },
+        ],
       });
 
-      if (user) {
-        throw new ConflictException('Пользователь с такой почтой существует');
+      if (existingUser) {
+        throw new ConflictException(
+          'Пользователь с таким email или username уже зарегистрирован',
+        );
       }
     }
     return updateUserDto;

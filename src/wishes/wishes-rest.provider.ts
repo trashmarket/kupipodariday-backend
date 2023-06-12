@@ -58,6 +58,18 @@ export class WishesRestProvider {
       relations: { owner: true, offers: true },
     });
 
+    const wishesMy = await this.wishRepository.find({
+      where: { id: user.id },
+    });
+
+    const findclone = wishesMy.some(
+      (item) => item.name === wish.name && wish.image == item.image,
+    );
+
+    if (findclone) {
+      throw new ForbiddenException('Такое желание вы уже клонировали!');
+    }
+
     if (wish.owner.id === user.id) {
       throw new ForbiddenException('Вы не можете скопировать свое желание!');
     }
