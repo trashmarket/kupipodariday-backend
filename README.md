@@ -8,7 +8,7 @@
 
 **🌐 Link**
 
-[Project React-Burger](https://buy.and.donate.nomoredomains.xyz/)
+[ Bue and donate](https://buy.and.donate.nomoredomains.xyz/)
 
 **📙Introduction**
 
